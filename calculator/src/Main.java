@@ -1,7 +1,5 @@
 import java.util.Scanner;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static String calc(String input) {
         String resString = "";
@@ -10,124 +8,141 @@ public class Main {
         boolean flagRomanInt2 = false;
         int int1 = 0, int2 = 0;
         String[] parts = input.split(" ");
+
         if (parts.length != 3) {
-            resString = "throws Exception";
-            return resString;
+            throw new IllegalArgumentException("throws Exception");
         }
+
         try {
             int1 = Integer.parseInt(parts[0]);
-        }
-        catch (NumberFormatException e) {
+            if (int1 < 1 || int1 > 10) {
+                throw new IllegalArgumentException("throws Exception");
+            }
+        } catch (NumberFormatException e) {
             flagRomanInt1 = true;
-            switch (parts[0]) {
-                case "I": int1 = 1; break;
-                case "II": int1 = 2; break;
-                case "III": int1 = 3; break;
-                case "IV": int1 = 4; break;
-                case "V": int1 = 5; break;
-                case "VI": int1 = 6; break;
-                case "VII": int1 = 7; break;
-                case "VIII": int1 = 8; break;
-                case "IX": int1 = 9; break;
-                case "X": int1 = 10; break;
-                default:
-                    resString = "throws Exception";
+            int1 = romanToInt(parts[0]);
+            if (int1 == -1) {
+                throw new IllegalArgumentException("throws Exception");
             }
         }
+
         try {
             int2 = Integer.parseInt(parts[2]);
-        }
-        catch (NumberFormatException e) {
+            if (int2 < 1 || int2 > 10) {
+                throw new IllegalArgumentException("throws Exception");
+            }
+        } catch (NumberFormatException e) {
             flagRomanInt2 = true;
-            switch (parts[2]) {
-                case "I": int2 = 1; break;
-                case "II": int2 = 2; break;
-                case "III": int2 = 3; break;
-                case "IV": int2 = 4; break;
-                case "V": int2 = 5; break;
-                case "VI": int2 = 6; break;
-                case "VII": int2 = 7; break;
-                case "VIII": int2 = 8; break;
-                case "IX": int2 = 9; break;
-                case "X": int2 = 10; break;
-                default:
-                    resString = "throws Exception";
+            int2 = romanToInt(parts[2]);
+            if (int2 == -1) {
+                throw new IllegalArgumentException("throws Exception");
             }
         }
+
+        if (flagRomanInt1 != flagRomanInt2) {
+            throw new IllegalArgumentException("throws Exception");
+        }
+
         char operator = parts[1].charAt(0);
- //       if (flagRomanInt1 && flagRomanInt2) {
-            switch (operator) {
-                case '+':
-                    resInt += int1 + int2;
-                    break;
-                case '-':
-                    if ((flagRomanInt1 && flagRomanInt2) && int1 < int2) {
-                        resString = "throws Exception";
-                        break;
-                    }
-                    resInt += int1 - int2;
-                    break;
-                case '*':
-                    resInt += int1 * int2;
-                    break;
-                case '/':
-                    resInt += int1 / int2;
-                    break;
-                default:
-                    resString = "throws Exception";
-            }
-            if ((flagRomanInt1 == true && flagRomanInt2 == false)||(flagRomanInt1 == false && flagRomanInt2 == true)){
-            resString = "throws Exception";
-        }
-        if (flagRomanInt1 && flagRomanInt2){
-                while (resInt != 0){
-                    if (resInt == 100){
-                        resString += 'C';
-                    resInt -= 100;
-                    return resString;
-                    }
-                    else if (resInt >= 90) {
-                        resString += "XC";
-                        resInt -= 90;
-                    }
-                    else if (resInt >= 50) {
-                        resString += "L";
-                        resInt -= 50;
-                    }
-                    else if (resInt >= 40) {
-                        resString += "XL";
-                        resInt -= 40;
-                    }
-                    else if (resInt >= 10) {
-                        resString += "X";
-                        resInt -= 10;
-                    }
-                    else if (resInt >= 9) {
-                        resString += "IX";
-                        resInt -= 9;
-                    }
-                    else if (resInt >= 5) {
-                        resString += "V";
-                        resInt -= 5;
-                    }
-                    else if (resInt >= 4) {
-                        resString += "IV";
-                        resInt -= 4;
-                    }
-                    else if (resInt >= 1) {
-                        resString += "I";
-                        resInt -= 1;
-                    }
+        switch (operator) {
+            case '+':
+                resInt = int1 + int2;
+                break;
+            case '-':
+                if (flagRomanInt1 && int1 < int2) {
+                    throw new IllegalArgumentException("throws Exception");
                 }
-            }
-        else if (resString != "throws Exception") {
-            resString += resInt;
+                resInt = int1 - int2;
+                break;
+            case '*':
+                resInt = int1 * int2;
+                break;
+            case '/':
+                if (int2 == 0) {
+                    throw new IllegalArgumentException("throws Exception");
+                }
+                resInt = int1 / int2;
+                break;
+            default:
+                throw new IllegalArgumentException("throws Exception");
         }
+
+        if (flagRomanInt1 && flagRomanInt2) {
+            if (resInt < 1) {
+                throw new IllegalArgumentException("throws Exception");
+            }
+            resString = intToRoman(resInt);
+        } else {
+            resString = Integer.toString(resInt);
+        }
+
         return resString;
     }
+
+    private static int romanToInt(String roman) {
+        switch (roman) {
+            case "I": return 1;
+            case "II": return 2;
+            case "III": return 3;
+            case "IV": return 4;
+            case "V": return 5;
+            case "VI": return 6;
+            case "VII": return 7;
+            case "VIII": return 8;
+            case "IX": return 9;
+            case "X": return 10;
+            default: return -1;
+        }
+    }
+
+    private static String intToRoman(int number) {
+        StringBuilder sb = new StringBuilder();
+        while (number >= 100) {
+            sb.append("C");
+            number -= 100;
+        }
+        while (number >= 90) {
+            sb.append("XC");
+            number -= 90;
+        }
+        while (number >= 50) {
+            sb.append("L");
+            number -= 50;
+        }
+        while (number >= 40) {
+            sb.append("XL");
+            number -= 40;
+        }
+        while (number >= 10) {
+            sb.append("X");
+            number -= 10;
+        }
+        while (number >= 9) {
+            sb.append("IX");
+            number -= 9;
+        }
+        while (number >= 5) {
+            sb.append("V");
+            number -= 5;
+        }
+        while (number >= 4) {
+            sb.append("IV");
+            number -= 4;
+        }
+        while (number >= 1) {
+            sb.append("I");
+            number -= 1;
+        }
+        return sb.toString();
+    }
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
-        System.out.println(calc(input));
+        try {
+            System.out.println(calc(input));
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
